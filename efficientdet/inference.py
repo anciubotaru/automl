@@ -786,7 +786,7 @@ class InferenceDriver(object):
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     start_time = time.time()
-    with tf.Session() as sess:
+    with tf.Session(config=config) as sess:
       # Buid inputs and preprocessing.
       raw_images, images, scales = build_inputs(image_path_pattern,
                                                 params['image_size'])
