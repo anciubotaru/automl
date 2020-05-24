@@ -27,12 +27,12 @@ import collections
 from absl import logging
 import numpy as np
 import tensorflow.compat.v1 as tf
-import utils
-from object_detection import argmax_matcher
-from object_detection import box_list
-from object_detection import faster_rcnn_box_coder
-from object_detection import region_similarity_calculator
-from object_detection import target_assigner
+import ed_utils
+from ed_object_detection import argmax_matcher
+from ed_object_detection import box_list
+from ed_object_detection import faster_rcnn_box_coder
+from ed_object_detection import region_similarity_calculator
+from ed_object_detection import target_assigner
 
 # The minimum score to consider a logit for identifying detections.
 MIN_CLASS_SCORE = -5.0
@@ -457,8 +457,8 @@ class Anchors(object):
     self.num_scales = num_scales
     self.aspect_ratios = aspect_ratios
     self.anchor_scale = anchor_scale
-    self.image_size = utils.parse_image_size(image_size)
-    self.feat_sizes = utils.get_feat_sizes(image_size, max_level)
+    self.image_size = ed_utils.parse_image_size(image_size)
+    self.feat_sizes = ed_utils.get_feat_sizes(image_size, max_level)
     self.config = self._generate_configs()
     self.boxes = self._generate_boxes()
 

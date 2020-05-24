@@ -35,7 +35,7 @@ import anchors
 import dataloader
 import det_model_fn
 import hparams_config
-import utils
+import ed_utils
 from visualize import vis_utils
 from tensorflow.python.client import timeline  # pylint: disable=g-direct-tensorflow-import
 
@@ -162,7 +162,7 @@ def build_model(model_name: Text, inputs: tf.Tensor, **kwargs):
     Each is a dictionary with key as feature level and value as predictions.
   """
   model_arch = det_model_fn.get_model_arch(model_name)
-  cls_outputs, box_outputs = utils.build_model_with_precision(
+  cls_outputs, box_outputs = ed_utils.build_model_with_precision(
       kwargs.get('precision', None), model_arch, inputs, model_name, **kwargs)
   if kwargs.get('precision', None):
     # Post-processing has multiple places with hard-coded float32.
@@ -186,11 +186,11 @@ def restore_ckpt(sess, ckpt_path, ema_decay=0.9998, export_ckpt=None):
     ckpt_path = tf.train.latest_checkpoint(ckpt_path)
   if ema_decay > 0:
     ema = tf.train.ExponentialMovingAverage(decay=0.0)
-    ema_vars = utils.get_ema_vars()
+    ema_vars = ed_utils.get_ema_vars()
     var_dict = ema.variables_to_restore(ema_vars)
     ema_assign_op = ema.apply(ema_vars)
   else:
-    var_dict = utils.get_ema_vars()
+    var_dict = ed_utils.get_ema_vars()
     ema_assign_op = None
 
   tf.train.get_or_create_global_step()
@@ -253,7 +253,7 @@ def det_post_process_combined(params, cls_outputs, box_outputs, scales,
       tf.tile(
           tf.expand_dims(tf.range(batch_size), axis=1), [1, max_boxes_to_draw]),
       dtype=tf.float32)
-  image_size = utils.parse_image_size(params['image_size'])
+  image_size = ed_utils.parse_image_size(params['image_size'])
   ymin = tf.clip_by_value(nmsed_boxes[..., 0], 0, image_size[0]) * scales
   xmin = tf.clip_by_value(nmsed_boxes[..., 1], 0, image_size[1]) * scales
   ymax = tf.clip_by_value(nmsed_boxes[..., 2], 0, image_size[0]) * scales

@@ -33,7 +33,7 @@ from typing import Text, Tuple, List
 
 import hparams_config
 import inference
-import utils
+import ed_utils
 from tensorflow.python.client import timeline  # pylint: disable=g-direct-tensorflow-import
 
 flags.DEFINE_string('model_name', 'efficientdet-d0', 'Model.')
@@ -102,7 +102,7 @@ class ModelInspector(object):
 
     model_config = hparams_config.get_detection_config(model_name)
     model_config.override(hparams)  # Add custom overrides
-    model_config.image_size = utils.parse_image_size(model_config.image_size)
+    model_config.image_size = ed_utils.parse_image_size(model_config.image_size)
 
     # If batch size is 0, then build a graph with dynamic batch size.
     self.batch_size = batch_size or None

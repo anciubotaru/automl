@@ -23,7 +23,7 @@ import os
 from absl import logging
 import tensorflow.compat.v1 as tf
 
-import utils
+import ed_utils
 
 
 class UtilsTest(tf.test.TestCase):
@@ -48,34 +48,34 @@ class UtilsTest(tf.test.TestCase):
       saver.save(sess, ckpt_path)
 
     # Save checkpoint if the new objective is better.
-    self.assertTrue(utils.archive_ckpt('eval1', 0.1, ckpt_path))
+    self.assertTrue(ed_utils.archive_ckpt('eval1', 0.1, ckpt_path))
     logging.info(os.listdir(model_dir))
     self.assertTrue(tf.io.gfile.exists(os.path.join(model_dir, 'archive')))
     self.assertFalse(tf.io.gfile.exists(os.path.join(model_dir, 'backup')))
 
     # Save checkpoint if the new objective is better.
-    self.assertTrue(utils.archive_ckpt('eval2', 0.2, ckpt_path))
+    self.assertTrue(ed_utils.archive_ckpt('eval2', 0.2, ckpt_path))
     self.assertTrue(tf.io.gfile.exists(os.path.join(model_dir, 'archive')))
     self.assertTrue(tf.io.gfile.exists(os.path.join(model_dir, 'backup')))
 
     # Skip checkpoint if the new objective is worse.
-    self.assertFalse(utils.archive_ckpt('eval3', 0.1, ckpt_path))
+    self.assertFalse(ed_utils.archive_ckpt('eval3', 0.1, ckpt_path))
 
     # Save checkpoint if the new objective is better.
     self.assertTrue(utils.archive_ckpt('eval4', 0.3, ckpt_path))
 
     # Save checkpoint if the new objective is equal.
-    self.assertTrue(utils.archive_ckpt('eval5', 0.3, ckpt_path))
+    self.assertTrue(ed_utils.archive_ckpt('eval5', 0.3, ckpt_path))
     self.assertTrue(tf.io.gfile.exists(os.path.join(model_dir, 'archive')))
     self.assertTrue(tf.io.gfile.exists(os.path.join(model_dir, 'backup')))
 
   def test_image_size(self):
-    self.assertEqual(utils.parse_image_size('1280x640'), (640, 1280))
-    self.assertEqual(utils.parse_image_size(1280), (1280, 1280))
-    self.assertEqual(utils.parse_image_size((1280, 640)), (1280, 640))
+    self.assertEqual(ed_utils.parse_image_size('1280x640'), (640, 1280))
+    self.assertEqual(ed_utils.parse_image_size(1280), (1280, 1280))
+    self.assertEqual(ed_utils.parse_image_size((1280, 640)), (1280, 640))
 
   def test_get_feat_sizes(self):
-    feats = utils.get_feat_sizes(640, 2)
+    feats = ed_utils.get_feat_sizes(640, 2)
     self.assertEqual(feats, [{
         'height': 640,
         'width': 640
@@ -87,7 +87,7 @@ class UtilsTest(tf.test.TestCase):
         'width': 160
     }])
 
-    feats = utils.get_feat_sizes((640, 300), 2)
+    feats = ed_utils.get_feat_sizes((640, 300), 2)
     self.assertEqual(feats, [{
         'height': 640,
         'width': 300,
@@ -107,7 +107,7 @@ class UtilsTest(tf.test.TestCase):
       return tf.cast(a, inputs.dtype) * conv(x) * inputs
 
     x = tf.constant(2.0, dtype=tf.float32)  # input can be any type.
-    out = utils.build_model_with_precision('mixed_float16', _model, x)
+    out = ed_utils.build_model_with_precision('mixed_float16', _model, x)
     # Variables should be float32.
     for v in tf.global_variables():
       self.assertIn(v.dtype, (tf.float32, tf.dtypes.as_dtype('float32_ref')))

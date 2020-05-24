@@ -21,7 +21,7 @@ from __future__ import print_function
 from absl import logging
 import tensorflow.compat.v1 as tf
 
-import utils
+import ed_utils
 from backbone import efficientnet_model
 
 
@@ -36,7 +36,7 @@ class ModelTest(tf.test.TestCase):
         0,
         'channels_last',
         num_classes=10,
-        batch_norm=utils.batch_norm_class(False))
+        batch_norm=ed_utils.batch_norm_class(False))
     blocks_args = [
         efficientnet_model.BlockArgs(
             kernel_size=3,
@@ -63,7 +63,7 @@ class ModelTest(tf.test.TestCase):
         0,
         'channels_last',
         num_classes=10,
-        batch_norm=utils.TpuBatchNormalization)
+        batch_norm=ed_utils.TpuBatchNormalization)
     blocks_args = [
         efficientnet_model.BlockArgs(
             kernel_size=3,
@@ -90,7 +90,7 @@ class ModelTest(tf.test.TestCase):
         0,
         'channels_last',
         num_classes=10,
-        batch_norm=utils.TpuBatchNormalization)
+        batch_norm=ed_utils.TpuBatchNormalization)
     blocks_args = [
         efficientnet_model.BlockArgs(
             kernel_size=3,
@@ -117,7 +117,7 @@ class ModelTest(tf.test.TestCase):
         0,
         'channels_last',
         num_classes=10,
-        batch_norm=utils.TpuBatchNormalization)
+        batch_norm=ed_utils.TpuBatchNormalization)
     blocks_args = [
         efficientnet_model.BlockArgs(
             kernel_size=3,
@@ -144,7 +144,7 @@ class ModelTest(tf.test.TestCase):
         0,
         'channels_last',
         num_classes=10,
-        batch_norm=utils.TpuBatchNormalization)
+        batch_norm=ed_utils.TpuBatchNormalization)
     blocks_args = [
         efficientnet_model.BlockArgs(
             kernel_size=3,
@@ -172,7 +172,7 @@ class ModelTest(tf.test.TestCase):
         0,
         'channels_last',
         num_classes=10,
-        batch_norm=utils.TpuBatchNormalization)
+        batch_norm=ed_utils.TpuBatchNormalization)
     blocks_args = [
         efficientnet_model.BlockArgs(
             kernel_size=3,
@@ -201,7 +201,7 @@ class ModelTest(tf.test.TestCase):
         0,
         'channels_last',
         num_classes=10,
-        batch_norm=utils.TpuBatchNormalization)
+        batch_norm=ed_utils.TpuBatchNormalization)
     blocks_args = [
         efficientnet_model.BlockArgs(
             kernel_size=3,
@@ -231,7 +231,7 @@ class ModelTest(tf.test.TestCase):
         0,
         'channels_last',
         num_classes=10,
-        batch_norm=utils.TpuBatchNormalization)
+        batch_norm=ed_utils.TpuBatchNormalization)
     blocks_args = [
         efficientnet_model.BlockArgs(
             kernel_size=3,

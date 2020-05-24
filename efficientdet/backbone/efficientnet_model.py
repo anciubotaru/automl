@@ -33,7 +33,7 @@ import six
 from six.moves import xrange
 import tensorflow.compat.v1 as tf
 
-import utils
+import ed_utils
 
 GlobalParams = collections.namedtuple('GlobalParams', [
     'batch_norm_momentum', 'batch_norm_epsilon', 'dropout_rate', 'data_format',
@@ -386,7 +386,7 @@ class MBConvBlock(tf.keras.layers.Layer):
       ) and self._block_args.input_filters == self._block_args.output_filters:
         # Apply only if skip connection presents.
         if survival_prob:
-          x = utils.drop_connect(x, training, survival_prob)
+          x = ed_utils.drop_connect(x, training, survival_prob)
         x = tf.add(x, inputs)
     logging.info('Project shape: %s', x.shape)
     return x
@@ -459,7 +459,7 @@ class MBConvBlockWithoutDepthwise(MBConvBlock):
       ) and self._block_args.input_filters == self._block_args.output_filters:
         # Apply only if skip connection presents.
         if survival_prob:
-          x = utils.drop_connect(x, training, survival_prob)
+          x = ed_utils.drop_connect(x, training, survival_prob)
         x = tf.add(x, inputs)
     logging.info('Project shape: %s', x.shape)
     return x

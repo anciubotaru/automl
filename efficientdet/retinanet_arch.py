@@ -28,7 +28,7 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 
 import hparams_config
-import utils
+import ed_utils
 
 
 _BATCH_NORM_DECAY = 0.997
@@ -645,7 +645,7 @@ def retinanet(features, model_name='retinanet-50', config=None, **kwargs):
   feats = resnet_fpn(features, min_level, max_level, resnet_depth,
                      is_training_bn, use_nearest_upsampling)
   logging.info('backbone+fpn params/flops = {:.6f}M, {:.9f}B'.format(
-      *utils.num_params_flops()))
+      *ed_utils.num_params_flops()))
   # add class net and box net in RetinaNet. The class net and the box net are
   # shared among all the levels.
   with tf.variable_scope('retinanet'):
@@ -660,7 +660,7 @@ def retinanet(features, model_name='retinanet-50', config=None, **kwargs):
         box_outputs[level] = box_net(feats[level], level,
                                      num_anchors, is_training_bn)
   logging.info('backbone+fpn params/flops = {:.6f}M, {:.9f}B'.format(
-      *utils.num_params_flops()))
+      *ed_utils.num_params_flops()))
 
   return class_outputs, box_outputs
 

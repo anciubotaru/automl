@@ -22,7 +22,7 @@ import tensorflow.compat.v1 as tfv1
 
 import efficientdet_arch as legacy_arch
 import hparams_config
-import utils
+import ed_utils
 from keras import utils_keras
 
 
@@ -38,7 +38,7 @@ class BiFPNLayer(tfv1.keras.layers.Layer):
     self.min_level = min_level
     self.max_level = max_level
     self.image_size = image_size
-    self.feat_sizes = utils.get_feat_sizes(image_size, max_level)
+    self.feat_sizes = ed_utils.get_feat_sizes(image_size, max_level)
 
     self.fpn_weight_method = fpn_weight_method
     self.apply_bn_for_resampling = apply_bn_for_resampling
@@ -171,7 +171,7 @@ class ResampleFeatureMap(tfv1.keras.layers.Layer):
     if self.num_channels != self.target_num_channels:
       feat = self.conv2d(feat)
       if self.apply_bn:
-        feat = utils.batch_norm_act(
+        feat = ed_utils.batch_norm_act(
             feat,
             is_training_bn=self.is_training,
             act_type=None,
@@ -303,7 +303,7 @@ class ClassNet(tf.keras.layers.Layer):
 
       bn_act_ops_per_level = {}
       for level in range(self.min_level, self.max_level + 1):
-        bn_act_ops_per_level[level] = utils_keras.BatchNormAct(
+        bn_act_ops_per_level[level] = ed_utils_keras.BatchNormAct(
             self.is_training,
             act_type=self.act_type,
             init_zero=False,
@@ -665,17 +665,17 @@ def efficientdet(features, model_name=None, config=None, **kwargs):
   # build backbone features.
   features = legacy_arch.build_backbone(features, config)
   logging.info('backbone params/flops = {:.6f}M, {:.9f}B'.format(
-      *utils.num_params_flops()))
+      *ed_utils.num_params_flops()))
 
   # build feature network.
   fpn_feats = legacy_arch.build_feature_network(features, config)
   logging.info('backbone+fpn params/flops = {:.6f}M, {:.9f}B'.format(
-      *utils.num_params_flops()))
+      *ed_utils.num_params_flops()))
 
   # build class and box predictions.
   class_box = BuildClassAndBoxOutputs(**config)
   class_outputs, box_outputs = class_box.call(fpn_feats)
   logging.info('backbone+fpn+box params/flops = {:.6f}M, {:.9f}B'.format(
-      *utils.num_params_flops()))
+      *ed_utils.num_params_flops()))
 
   return class_outputs, box_outputs

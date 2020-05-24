@@ -23,7 +23,7 @@ import tensorflow.compat.v1 as tf
 
 import efficientdet_arch
 import hparams_config
-import utils
+import ed_utils
 
 
 class EfficientDetArchTest(tf.test.TestCase):
@@ -46,7 +46,7 @@ class EfficientDetArchTest(tf.test.TestCase):
         is_training_bn=is_training,
         image_size=isize,
         data_format=data_format)
-    return utils.num_params_flops(False)
+    return ed_utils.num_params_flops(False)
 
   def test_efficientdet_d0(self):
     self.assertSequenceEqual((3880067, 2535978423),
@@ -126,7 +126,7 @@ class EfficientDetArchPrecisionTest(tf.test.TestCase):
           precision=precision,
           image_size=512)
 
-    return utils.build_model_with_precision(precision, _model_fn, features)
+    return ed_utils.build_model_with_precision(precision, _model_fn, features)
 
   def test_float16(self):
     inputs = tf.ones(shape=[1, 512, 512, 3], name='input', dtype=tf.float32)

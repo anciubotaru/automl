@@ -30,7 +30,7 @@ import efficientdet_arch
 import hparams_config
 import iou_utils
 import retinanet_arch
-import utils
+import ed_utils
 
 _DEFAULT_BATCH_SIZE = 64
 
@@ -459,7 +459,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
   def _model_outputs(inputs):
     return model(inputs, config=hparams_config.Config(params))
 
-  cls_outputs, box_outputs = utils.build_model_with_precision(
+  cls_outputs, box_outputs = ed_utils.build_model_with_precision(
       params['precision'], _model_outputs, features)
 
   levels = cls_outputs.keys()
@@ -489,19 +489,19 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
   total_loss = det_loss + l2loss
 
   if mode == tf.estimator.ModeKeys.TRAIN:
-    utils.scalar('lrn_rate', learning_rate)
-    utils.scalar('trainloss/cls_loss', cls_loss)
-    utils.scalar('trainloss/box_loss', box_loss)
-    utils.scalar('trainloss/box_iou_loss', box_iou_loss)
-    utils.scalar('trainloss/det_loss', det_loss)
-    utils.scalar('trainloss/l2_loss', l2loss)
-    utils.scalar('trainloss/loss', total_loss)
+    ed_utils.scalar('lrn_rate', learning_rate)
+    ed_utils.scalar('trainloss/cls_loss', cls_loss)
+    ed_utils.scalar('trainloss/box_loss', box_loss)
+    ed_utils.scalar('trainloss/box_iou_loss', box_iou_loss)
+    ed_utils.scalar('trainloss/det_loss', det_loss)
+    ed_utils.scalar('trainloss/l2_loss', l2loss)
+    ed_utils.scalar('trainloss/loss', total_loss)
 
   moving_average_decay = params['moving_average_decay']
   if moving_average_decay:
     ema = tf.train.ExponentialMovingAverage(
         decay=moving_average_decay, num_updates=global_step)
-    ema_vars = utils.get_ema_vars()
+    ema_vars = ed_utils.get_ema_vars()
   if params['use_horovod']:
     import horovod.tensorflow as hvd
     learning_rate = learning_rate * hvd.size()
@@ -534,7 +534,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
         tvars = [gv[1] for gv in grads_and_vars]
         clipped_grads, gnorm = tf.clip_by_global_norm(
             grads, params['clip_gradients_norm'])
-        utils.scalar('gnorm', gnorm)
+        ed_utils.scalar('gnorm', gnorm)
         grads_and_vars = list(zip(clipped_grads, tvars))
 
       with tf.control_dependencies(update_ops):
@@ -630,7 +630,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
       """Loads pretrained model through scaffold function."""
       logging.info('restore variables from %s', checkpoint)
 
-      var_map = utils.get_ckpt_var_map(
+      var_map = ed_utils.get_ckpt_var_map(
           ckpt_path=checkpoint,
           ckpt_scope=ckpt_scope,
           var_scope=var_scope,
@@ -654,7 +654,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
       loss=total_loss,
       train_op=train_op,
       eval_metrics=eval_metrics,
-      host_call=utils.get_tpu_host_call(global_step, params),
+      host_call=ed_utils.get_tpu_host_call(global_step, params),
       scaffold_fn=scaffold_fn,
       training_hooks=training_hooks)
 

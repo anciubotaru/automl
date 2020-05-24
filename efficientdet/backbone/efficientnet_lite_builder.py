@@ -26,7 +26,7 @@ import os
 from absl import logging
 import tensorflow.compat.v1 as tf
 
-import utils
+import ed_utils
 from backbone import efficientnet_builder
 from backbone import efficientnet_model
 
@@ -76,7 +76,7 @@ def efficientnet_lite(width_coefficient=None,
       relu_fn=tf.nn.relu6,  # Relu6 is for easier quantization.
       # The default is TPU-specific batch norm.
       # The alternative is tf.layers.BatchNormalization.
-      batch_norm=utils.TpuBatchNormalization,  # TPU-specific requirement.
+      batch_norm=ed_utils.TpuBatchNormalization,  # TPU-specific requirement.
       clip_projection_output=False,
       fix_head_stem=True,  # Don't scale stem and head.
       local_pooling=True,  # special cases for tflite issues.
@@ -147,7 +147,7 @@ def build_model(images,
   if not training or fine_tuning:
     if not override_params:
       override_params = {}
-    override_params['batch_norm'] = utils.BatchNormalization
+    override_params['batch_norm'] = ed_utils.BatchNormalization
   blocks_args, global_params = get_model_params(model_name, override_params)
 
   if model_dir:

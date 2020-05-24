@@ -40,7 +40,7 @@ import tensorflow.compat.v1 as tf
 import dataloader
 import det_model_fn
 import hparams_config
-import utils
+import ed_utils
 
 
 # Cloud TPU Cluster Resolvers
@@ -157,7 +157,7 @@ def main(_):
     config.num_epochs = FLAGS.num_epochs
 
   # Parse image size in case it is in string format.
-  config.image_size = utils.parse_image_size(config.image_size)
+  config.image_size = ed_utils.parse_image_size(config.image_size)
 
   # The following is for spatial partitioning. `features` has one tensor while
   # `labels` had 4 + (`max_level` - `min_level` + 1) * 2 tensors. The input
@@ -187,7 +187,7 @@ def main(_):
     # [batch_size, 6, 6, 9], which cannot be partitioned (6 % 4 != 0). In this
     # case, the level-8 and level-9 target tensors are not partition-able, and
     # the highest partition-able level is 7.
-    feat_sizes = utils.get_feat_sizes(
+    feat_sizes = ed_utils.get_feat_sizes(
         config.get('image_size'), config.get('max_level'))
     for level in range(config.get('min_level'), config.get('max_level') + 1):
 
@@ -301,7 +301,7 @@ def main(_):
           steps=FLAGS.eval_samples//FLAGS.eval_batch_size)
       logging.info('Eval results: %s', eval_results)
       ckpt = tf.train.latest_checkpoint(FLAGS.model_dir)
-      utils.archive_ckpt(eval_results, eval_results['AP'], ckpt)
+      ed_utils.archive_ckpt(eval_results, eval_results['AP'], ckpt)
 
   elif FLAGS.mode == 'eval':
     # Override the default options: disable randomization in the input pipeline
@@ -349,7 +349,7 @@ def main(_):
           logging.info('%s has no global step info: stop!', ckpt)
           break
 
-        utils.archive_ckpt(eval_results, eval_results['AP'], ckpt)
+        ed_utils.archive_ckpt(eval_results, eval_results['AP'], ckpt)
         total_step = int((config.num_epochs * FLAGS.num_examples_per_epoch) /
                          FLAGS.train_batch_size)
         if current_step >= total_step:
@@ -402,7 +402,7 @@ def main(_):
           steps=FLAGS.eval_samples//FLAGS.eval_batch_size)
       logging.info('Evaluation results: %s', eval_results)
       ckpt = tf.train.latest_checkpoint(FLAGS.model_dir)
-      utils.archive_ckpt(eval_results, eval_results['AP'], ckpt)
+      ed_utils.archive_ckpt(eval_results, eval_results['AP'], ckpt)
 
   else:
     logging.info('Mode not found.')

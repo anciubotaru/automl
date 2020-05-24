@@ -29,7 +29,7 @@ from PIL import Image
 import tensorflow.compat.v1 as tf
 
 import model_inspect
-import utils
+import ed_utils
 FLAGS = flags.FLAGS
 
 
@@ -113,7 +113,7 @@ class ModelInspectTest(tf.test.TestCase):
     inspector.run_model('saved_model')
     self.assertTrue(
         os.path.exists(os.path.join(self.savedmodel_dir, 'saved_model.pb')))
-    utils.set_precision_policy('float32')
+    ed_utils.set_precision_policy('float32')
 
   def test_saved_model_infer(self):
     inspector = model_inspect.ModelInspector(**self.params)

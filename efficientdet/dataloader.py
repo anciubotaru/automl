@@ -21,8 +21,8 @@ https://github.com/tensorflow/tpu/blob/master/models/official/retinanet/anchors.
 import tensorflow.compat.v1 as tf
 
 import anchors
-from object_detection import preprocessor
-from object_detection import tf_example_decoder
+from ed_object_detection import preprocessor
+from ed_object_detection import tf_example_decoder
 
 MAX_NUM_INSTANCES = 400
 
